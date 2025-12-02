@@ -13,6 +13,9 @@ jobs:
       id-token: write
       contents: read
 
+    env:
+      IMAGE: northamerica-northeast2-docker.pkg.dev/jialedu/du-assignment3/app:latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -20,30 +23,28 @@ jobs:
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
-          audience: 'https://iam.googleapis.com/projects/1095252659035/locations/global/workloadIdentityPools/github-pool2/providers/github-provider'
+          audience: '//iam.googleapis.com/projects/1095252659035/locations/global/workloadIdentityPools/github-pool2/providers/github-provider'
           workload_identity_provider: 'projects/1095252659035/locations/global/workloadIdentityPools/github-pool2/providers/github-provider'
-          service_account: "github-cicd@jialedu.iam.gserviceaccount.com"
+          service_account: 'github-cicd@jialedu.iam.gserviceaccount.com'
 
       - name: Configure Docker for Artifact Registry
         run: gcloud auth configure-docker northamerica-northeast2-docker.pkg.dev
 
       - name: Build Docker image
-        run: |
-          docker build -t app .
+        run: docker build -t app .
 
       - name: Tag image
-        run: |
-          docker tag app northamerica-northeast2-docker.pkg.dev/jialedu/du-assignment3/app:latest
+        run: docker tag app $IMAGE
 
       - name: Push to Artifact Registry
-        run: |
-          docker push northamerica-northeast2-docker.pkg.dev/jialedu/du-assignment3/app:latest
+        run: docker push $IMAGE
 
       - name: Deploy to Cloud Run
         run: |
           gcloud run deploy du-cloudrun-app \
-            --image ${{ env.IMAGE }} \
+            --image $IMAGE \
             --region northamerica-northeast2 \
             --platform managed \
             --allow-unauthenticated
+
 
