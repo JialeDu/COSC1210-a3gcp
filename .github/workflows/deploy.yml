@@ -42,8 +42,8 @@ jobs:
       - name: Deploy to Cloud Run
         run: |
           gcloud run deploy du-cloudrun-app \
-            --image=northamerica-northeast2-docker.pkg.dev/jialedu/du-assignment3/app:latest \
-            --region=northamerica-northeast2 \
-            --platform=managed \
-            --allow-unauthenticated=false
+            --image ${{ env.IMAGE }} \
+            --region northamerica-northeast2 \
+            --platform managed \
+            --allow-unauthenticated
 
