@@ -1,4 +1,4 @@
-name: Deploy to GCP Cloud Run
+name: GCP Deploy Pipeline
 
 on:
   push:
@@ -14,13 +14,13 @@ jobs:
       contents: read
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
-          workload_identity_provider: "projects/$(gcloud projects describe jialedu --format='value(projectNumber)')/locations/global/workloadIdentityPools/github-pool/providers/github-provider"
+          workload_identity_provider: "projects/1095252569035/locations/global/workloadIdentityPools/github-pool/providers/github-provider"
           service_account: "github-cicd@jialedu.iam.gserviceaccount.com"
 
       - name: Configure Docker for Artifact Registry
@@ -32,8 +32,17 @@ jobs:
 
       - name: Tag image
         run: |
-          docker tag app northamerica-northeast2-docker.pkg.dev/jialedu/assignment3/app:latest
+          docker tag app northamerica-northeast2-docker.pkg.dev/jialedu/du-assignment3/app:latest
 
       - name: Push to Artifact Registry
         run: |
-          docker push northamerica-northeast2-docker.pkg.dev/jialedu/assignment3/app:latest
+          docker push northamerica-northeast2-docker.pkg.dev/jialedu/du-assignment3/app:latest
+
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy du-cloudrun-app \
+            --image=northamerica-northeast2-docker.pkg.dev/jialedu/du-assignment3/app:latest \
+            --region=northamerica-northeast2 \
+            --platform=managed \
+            --allow-unauthenticated=false
+
