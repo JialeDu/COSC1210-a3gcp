@@ -20,7 +20,7 @@ jobs:
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
-          audience: 'projects/1095252659035/locations/global/workloadIdentityPools/github-pool2/providers/github-provider'
+          audience: 'https://iam.googleapis.com/projects/1095252659035/locations/global/workloadIdentityPools/github-pool2/providers/github-provider'
           workload_identity_provider: 'projects/1095252659035/locations/global/workloadIdentityPools/github-pool2/providers/github-provider'
           service_account: "github-cicd@jialedu.iam.gserviceaccount.com"
 
